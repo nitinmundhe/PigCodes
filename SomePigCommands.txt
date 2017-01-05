@@ -1,0 +1,44 @@
+student = LOAD '/user/nitin/student_data.txt' using PigStorage(',') as ( id:int, firstname:chararray, lastname:chararray, contact:chararray, city:chararray );
+dump student
+student_details = LOAD '/user/nitin/student_details.txt' USING PigStorage(',') as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray);
+group_data
+employee_details = LOAD '/user/nitin/employee_details.txt' USING PigStorage(',') as (id:int, firstname:chararray, age:int, city:chararray);
+group_data
+cogroup =  COGROUP student_details by age,employee_details by age;
+
+
+customers = LOAD '/user/nitin/customers.txt' USING PigStorage(',')
+   as (id:int, name:chararray, age:int, address:chararray, salary:int);
+  
+orders = LOAD '/user/nitin/orders.txt' USING PigStorage(',')
+   as (oid:int, date:chararray, customer_id:int, amount:int);
+   
+   
+order_by_data = ORDER student_details BY age DESC;
+
+limit_data = LIMIT student_details 4; 
+
+SPLIT student_details into student_details1 if age<23, student_details2 if (22<age and age>25);
+
+student = UNION student_details1, student_details2;
+
+-- Cross Join 
+cross_data = CROSS customers, orders;
+
+-- Self Join
+customers1 = LOAD '/user/nitin/customers.txt' USING PigStorage(',')
+   as (id:int, name:chararray, age:int, address:chararray, salary:int);
+  
+customers2 = LOAD '/user/nitin/customers.txt' USING PigStorage(',')
+   as (id:int, name:chararray, age:int, address:chararray, salary:int);
+
+customers3 = JOIN customers1 BY id, customers2 BY id;
+
+-- Inner Join 
+coustomer_orders = JOIN customers BY id, orders BY customer_id;
+
+-- Left Outer
+outer_left = JOIN customers BY id LEFT OUTER, orders BY customer_id;
+
+-- Righ Outer
+outer_right = JOIN customers BY id RIGHT, orders BY customer_id;
